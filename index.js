@@ -1,10 +1,10 @@
-var c = document.getElementById("canvas");
-var ctx = c.getContext("2d");
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
 
 function resize() {
-	var box = c.getBoundingClientRect();
-	c.width = box.width;
-	c.height = box.height;
+	var box = canvas.getBoundingClientRect();
+	canvas.width = box.width;
+	canvas.height = box.height;
 }
 
 var light = {
@@ -16,8 +16,8 @@ var colors = ["#FBBB00", "#EA4335", "#03A9F1"];
 
 function Box() {
 	this.half_size = Math.floor(Math.random() * 75 + 1);
-	this.x = Math.floor(Math.random() * c.width + 1);
-	this.y = Math.floor(Math.random() * c.height + 1);
+	this.x = Math.floor(Math.random() * canvas.width + 1);
+	this.y = Math.floor(Math.random() * canvas.height + 1);
 	this.r = Math.random() * Math.PI;
 	this.shadow_length = 400;
 	this.color = colors[Math.floor(Math.random() * colors.length)];
@@ -65,11 +65,11 @@ function Box() {
 		ctx.fillStyle = this.color;
 		ctx.fill();
 
-		if (this.y - this.half_size > c.height) {
-			this.y -= c.height + 100;
+		if (this.y - this.half_size > canvas.height) {
+			this.y -= canvas.height + 100;
 		}
-		if (this.x - this.half_size > c.width) {
-			this.x -= c.width + 100;
+		if (this.x - this.half_size > canvas.width) {
+			this.x -= canvas.width + 100;
 		}
 	};
 
@@ -105,7 +105,7 @@ function Box() {
 			ctx.lineTo(points[n].startX, points[n].startY);
 			ctx.lineTo(points[n].endX, points[n].endY);
 			ctx.lineTo(points[i].endX, points[i].endY);
-			ctx.fillStyle = "#2A2A2A";
+			ctx.fillStyle = "#2a2a2a";
 			ctx.fill();
 		}
 	};
@@ -114,7 +114,7 @@ function Box() {
 var boxes = [];
 
 function draw() {
-	ctx.clearRect(0, 0, c.width, c.height);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	for (var i = 0; i < boxes.length; i++) {
 		boxes[i].rotate();
@@ -135,7 +135,7 @@ while (boxes.length < 150) {
 }
 
 window.onresize = resize;
-c.onmousemove = function (e) {
+canvas.onmousemove = function (e) {
 	light.x = e.offsetX == undefined ? e.layerX : e.offsetX;
 	light.y = e.offsetY == undefined ? e.layerY : e.offsetY;
 };
