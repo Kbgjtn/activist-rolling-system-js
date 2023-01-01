@@ -1,18 +1,20 @@
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext("2d");
+// reference: https://animatedbackgrounds.me/
 
-function resize() {
-	var box = canvas.getBoundingClientRect();
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+
+const resize = () => {
+	let box = canvas.getBoundingClientRect();
 	canvas.width = box.width;
 	canvas.height = box.height;
-}
+};
 
-var light = {
+let light = {
 	x: 10,
 	y: 100,
 };
 
-var colors = ["#FBBB00", "#EA4335", "#03A9F1"];
+let colors = ["#FBBB00", "#EA4335", "#03A9F1"];
 
 function Box() {
 	this.half_size = Math.floor(Math.random() * 75 + 1);
@@ -23,21 +25,24 @@ function Box() {
 	this.color = colors[Math.floor(Math.random() * colors.length)];
 
 	this.getDots = function () {
-		var full = (Math.PI * 2) / 4;
+		let full = (Math.PI * 2) / 4;
 
-		var p1 = {
+		let p1 = {
 			x: this.x + this.half_size * Math.sin(this.r),
 			y: this.y + this.half_size * Math.cos(this.r),
 		};
-		var p2 = {
+
+		let p2 = {
 			x: this.x + this.half_size * Math.sin(this.r + full),
 			y: this.y + this.half_size * Math.cos(this.r + full),
 		};
-		var p3 = {
+
+		let p3 = {
 			x: this.x + this.half_size * Math.sin(this.r + full * 2),
 			y: this.y + this.half_size * Math.cos(this.r + full * 2),
 		};
-		var p4 = {
+
+		let p4 = {
 			x: this.x + this.half_size * Math.sin(this.r + full * 3),
 			y: this.y + this.half_size * Math.cos(this.r + full * 3),
 		};
@@ -49,46 +54,50 @@ function Box() {
 			p4: p4,
 		};
 	};
+
 	this.rotate = function () {
-		var speed = (60 - this.half_size) / 40;
+		let speed = (60 - this.half_size) / 40;
 		this.r += speed * 0.002;
 		this.x += speed;
 		this.y += speed;
 	};
-	this.draw = function () {
-		var dots = this.getDots();
-		ctx.beginPath();
-		ctx.moveTo(dots.p1.x, dots.p1.y);
-		ctx.lineTo(dots.p2.x, dots.p2.y);
-		ctx.lineTo(dots.p3.x, dots.p3.y);
-		ctx.lineTo(dots.p4.x, dots.p4.y);
-		ctx.fillStyle = this.color;
-		ctx.fill();
 
-		if (this.y - this.half_size > canvas.height) {
-			this.y -= canvas.height + 100;
-		}
-		if (this.x - this.half_size > canvas.width) {
-			this.x -= canvas.width + 100;
-		}
+	this.draw = function () {
+		let dots = this.getDots();
+		context.beginPath();
+		context.moveTo(dots.p1.x, dots.p1.y);
+		context.lineTo(dots.p2.x, dots.p2.y);
+		context.lineTo(dots.p3.x, dots.p3.y);
+		context.lineTo(dots.p4.x, dots.p4.y);
+		context.fillStyle = this.color;
+		context.fill();
+
+		this.y - this.half_size > canvas.height
+			? (this.y -= canvas.height + 100)
+			: this.x - this.half_size > canvas.width
+			? (this.x -= canvas.width + 100)
+			: null;
 	};
 
 	this.drawShadow = function () {
-		var dots = this.getDots();
-		var angles = [];
-		var points = [];
+		let dots = this.getDots();
+		let angles = [];
+		let points = [];
 
 		for (dot in dots) {
-			var angle = Math.atan2(
+			let angle = Math.atan2(
 				light.y - dots[dot].y,
 				light.x - dots[dot].x
 			);
-			var endX =
+
+			let endX =
 				dots[dot].x +
 				this.shadow_length * Math.sin(-angle - Math.PI / 2);
-			var endY =
+
+			let endY =
 				dots[dot].y +
 				this.shadow_length * Math.cos(-angle - Math.PI / 2);
+
 			angles.push(angle);
 			points.push({
 				endX: endX,
@@ -98,29 +107,29 @@ function Box() {
 			});
 		}
 
-		for (var i = points.length - 1; i >= 0; i--) {
-			var n = i == 3 ? 0 : i + 1;
-			ctx.beginPath();
-			ctx.moveTo(points[i].startX, points[i].startY);
-			ctx.lineTo(points[n].startX, points[n].startY);
-			ctx.lineTo(points[n].endX, points[n].endY);
-			ctx.lineTo(points[i].endX, points[i].endY);
-			ctx.fillStyle = "#2a2a2a";
-			ctx.fill();
+		for (let i = points.length - 1; i >= 0; i--) {
+			let n = i == 3 ? 0 : i + 1;
+			context.beginPath();
+			context.moveTo(points[i].startX, points[i].startY);
+			context.lineTo(points[n].startX, points[n].startY);
+			context.lineTo(points[n].endX, points[n].endY);
+			context.lineTo(points[i].endX, points[i].endY);
+			context.fillStyle = "#2a2a2a";
+			context.fill();
 		}
 	};
 }
 
-var boxes = [];
+let boxes = [];
 
 function draw() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	for (var i = 0; i < boxes.length; i++) {
+	for (let i = 0; i < boxes.length; i++) {
 		boxes[i].rotate();
 		boxes[i].drawShadow();
 	}
-	for (var i = 0; i < boxes.length; i++) {
+	for (let i = 0; i < boxes.length; i++) {
 		collisionDetection(i);
 		boxes[i].draw();
 	}
@@ -141,17 +150,17 @@ canvas.onmousemove = function (e) {
 };
 
 function collisionDetection(b) {
-	for (var i = boxes.length - 1; i >= 0; i--) {
+	for (let i = boxes.length - 1; i >= 0; i--) {
 		if (i != b) {
-			var dx =
+			let dx =
 				boxes[b].x +
 				boxes[b].half_size -
 				(boxes[i].x + boxes[i].half_size);
-			var dy =
+			let dy =
 				boxes[b].y +
 				boxes[b].half_size -
 				(boxes[i].y + boxes[i].half_size);
-			var d = Math.sqrt(dx * dx + dy * dy);
+			let d = Math.sqrt(dx * dx + dy * dy);
 			if (d < boxes[b].half_size + boxes[i].half_size) {
 				boxes[b].half_size =
 					boxes[b].half_size > 1 ? (boxes[b].half_size -= 1) : 1;
